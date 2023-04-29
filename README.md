@@ -1,2 +1,1 @@
-# BigIdea
-All Software for the Harpoon composed monster
+# University Rover Challenge, Rover simulation
