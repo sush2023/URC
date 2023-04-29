@@ -76,18 +76,7 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-//  Serial.println("Forward"); 
-//  
-//  delay(2000);
-//
-//  Serial.println("Stop");
-//  
-//  delay(2000); 
-//  
-//  Serial.println("Backward"); 
-//  
-//  delay(2000);
+  
   while (!nh.connected()){
     {
       nh.spinOnce();
