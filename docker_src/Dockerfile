@@ -14,21 +14,24 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /workspace
 
-
 #
 # add the ROS deb repo to the apt sources list
 #
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-          git \
-		cmake \
-		build-essential \
-		curl \
-		wget \
-		gnupg2 \
-		lsb-release \
-		ca-certificates \
+	python3-pip \  
+	git \
+	cmake \
+	build-essential \
+	curl \
+	wget \
+	gnupg2 \
+	lsb-release \
+	ca-certificates \
+	python3-opencv \
     && rm -rf /var/lib/apt/lists/*
+
+RUN python3 -m pip install importlib-metadata
 
 RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
 RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
@@ -37,7 +40,8 @@ RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt
 #
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-          libpython3-dev \
+          unzip \
+	  libpython3-dev \
           python3-rosdep \
           python3-rosinstall-generator \
           python3-vcstool \
@@ -60,7 +64,6 @@ RUN mkdir ros_catkin_ws && \
     python3 ./src/catkin/bin/catkin_make_isolated --install --install-space ${ROS_ROOT} -DCMAKE_BUILD_TYPE=Release && \
     rm -rf /var/lib/apt/lists/*
 
-
 # 
 # setup entrypoint
 #
@@ -72,10 +75,15 @@ RUN echo 'source /ros_entrypoint.sh' >> /root/.bashrc
 
 WORKDIR /
 
-
 #
 # ros_deep_learning (PyTorch-based container only)
 #
 COPY ./scripts/ros_deep_learning.sh /tmp/ros_deep_learning.sh
 RUN cd /tmp && ./ros_deep_learning.sh
 
+COPY ./Miniconda3-latest-Linux-aarch64.sh .
+RUN chmod +x Miniconda3-latest-Linux-aarch64.sh && ./Miniconda3-latest-Linux-aarch64.sh
+
+#Copy intall shell script for opencv
+COPY ./install_opencv4.5.0_Jetson.sh .
+RUN chmod +x install_opencv4.5.0_Jetson.sh && ./install_opencv4.5.0_Jetson.sh
