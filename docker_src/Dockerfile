@@ -85,5 +85,5 @@ COPY ./Miniconda3-latest-Linux-aarch64.sh .
 RUN chmod +x Miniconda3-latest-Linux-aarch64.sh && ./Miniconda3-latest-Linux-aarch64.sh
 
 #Copy intall shell script for opencv
-#COPY ./install_opencv4.5.0_Jetson.sh .
-#RUN chmod +x install_opencv4.5.0_Jetson.sh && ./install_opencv4.5.0_Jetson.sh
+COPY ./install_opencv4.5.0_Jetson.sh .
+RUN chmod +x install_opencv4.5.0_Jetson.sh && ./install_opencv4.5.0_Jetson.sh
