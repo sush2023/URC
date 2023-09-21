@@ -4,3 +4,5 @@ This includes all the software stack for pitt Special Project's University Rover
 Alexander, freshmen, chocolate
 
 Myles, junior, superman
+
+Tyler, first year, vanilla
