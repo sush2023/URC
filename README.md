@@ -11,7 +11,7 @@ Myles, junior, superman
 
 Tyler, first year, vanilla
 
-<<<<<<< matt-git-practice
+<<<<<<< jackson-git-practice
 Jackson, freshman, mint chocolate chip
 
 =======
