@@ -10,3 +10,11 @@ Alexander, freshmen, chocolate
 Myles, junior, superman
 
 Tyler, first year, vanilla
+
+<<<<<<< matt-git-practice
+Jackson, freshman, mint chocolate chip
+
+=======
+
+Common sites for hardware research: sparkfun.com, digikey.
+>>>>>>> main
