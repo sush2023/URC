@@ -227,7 +227,6 @@ void messageCb( const std_msgs::String& msg){
 
 
 ros::NodeHandle nh;
-//ros::Subscriber state_sub = nh.subscribe("motor_contoller_publisher", 1000, writeMsgToLog);
 ros::Subscriber<std_msgs::String> sub("motor_controller_publisher", &messageCb );
 
 

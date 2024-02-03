@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
         cin >> state;
         msg.data = state;
 
-
+        state_pub.publish(&msg);
     }
     
     ros::spin();
