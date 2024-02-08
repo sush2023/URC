@@ -28,6 +28,7 @@ RUN apt-get update && \
 	gnupg2 \
 	lsb-release \
 	ca-certificates \
+  vim \
 	python3-opencv \
     && rm -rf /var/lib/apt/lists/*
 
