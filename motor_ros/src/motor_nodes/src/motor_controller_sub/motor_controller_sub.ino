@@ -1,4 +1,6 @@
 // Differential Drive Version 1.1 - Kaegan Phillips (1/30/24)
+
+//run using rosserial_python serial_node.py _port:=/dev/ttyACM0 _baud:=115200
 #include <Arduino.h>
 #include <ros.h>
 #include <std_msgs/String.h>
@@ -122,7 +124,7 @@ void Rover::stop()
 }
 
 // ROS Setup
-int input = 0;
+char input = 0;
 void messageCb( const std_msgs::String& msg)
 {
   input = msg.data;
@@ -133,7 +135,7 @@ ros::Subscriber<std_msgs::String> sub("motor_controller_publisher", &messageCb )
 void setup() 
 {
   // initialize serial communucation at 115200 baud
-  Serial.begin(115200);
+  Serial.begin(57600);
   Serial.println("Rover Control: Start");
 
   nh.initNode();
