@@ -95,22 +95,22 @@ class MotorWindow(QWidget):
             self.stop()
 
     def foward(self):
-        serMotor.write(bytes(b'foward'))
+        serMotor.write("1".encode())
     
     def backward(self):
-        serMotor.write(bytes(b'backward'))
+        serMotor.write("2".encode())
     
     def left(self):
-        serMotor.write(bytes(b'left'))
+        serMotor.write("3".encode())
     
     def right(self):
-        serMotor.write(bytes(b'right'))
+        serMotor.write("4".encode())
     
     def speed_up(self):
-        serMotor.write(bytes(b'boost'))
+        serMotor.write("5".encode())
 
     def stop(self):
-        serMotor.write(bytes(b'stop'))
+        serMotor.write("6".encode())
 
        
 
@@ -191,37 +191,37 @@ class ArmWindow(QWidget):
             self.stop_all()
 
     def claw_open(self):
-        serArm.write(bytes(b'Claw Open'))
+        serArm.write("Claw Open".encode())
     
     def claw_closed(self):
-        serArm.write(bytes(b'Claw Closed'))
+        serArm.write("Claw Closed".encode)
     
     def base_right(self):
-        serArm.write(bytes(b'Base Shift Right'))
+        serArm.write("Base Shift Right".encode)
     
     def base_left(self):
-        serArm.write(bytes(b'Base Shift Left'))
+        serArm.write("Base Shift Left".encode)
     
     def bottom_joint_foward(self):
-        serArm.write(bytes(b'Bottom Joint Foward'))
+        serArm.write("Bottom Joint Foward".encode)
 
     def bottom_joint_backwards(self):
-        serArm.write(bytes(b'Bottom Joint Backwards'))
+        serArm.write("Bottom Joint Backwards".encode)
 
     def middle_joint_foward(self):
-        serArm.write(bytes(b'Middle Joint Foward'))
+        serArm.write("Middle Joint Foward".encode)
 
     def middle_joint_backwards(self):
-        serArm.write(bytes(b'Middle Joint Backwards'))
+        serArm.write("Middle Joint Backwards".encode)
 
     def top_joint_foward(self):
-        serArm.write(bytes(b'Top Joint Foward'))
+        serArm.write("Top Joint Foward".encode)
 
     def top_joint_backwards(self):
-        serArm.write(bytes(b'Top Joint Backwards'))
+        serArm.write("Top Joint Backwards".encode)
     
     def stop_all(self):
-        serArm.write(bytes(b'Stop All'))
+        serArm.write("Stop All".encode)
 
 
 if __name__ == '__main__':
