@@ -131,7 +131,9 @@ class ArmWindow(QWidget):
         self.text4 = QLabel('Bottom Joint = U || Middle Joint = I || Top Joint = O', self)
         self.text5 = QLabel('Backwards: ', self)
         self.text6 = QLabel('Bottom Joint = J || Middle Joint = K || Top Joint = L', self)
-        self.text7 = QLabel('Stop All = Escape', self)
+        self.text7 = QLabel('Wrist Clockwise = Y || Wrist Counterclockwise = H', self)
+        self.text8 = QLabel('Stop All = Escape', self)
+        
         self.text.setFont(QFont('Arial', 15))      
         self.text.move(50,25)
         self.text2.setFont(QFont('Arial', 15))      
@@ -146,6 +148,8 @@ class ArmWindow(QWidget):
         self.text6.move(50,190)
         self.text7.setFont(QFont('Arial', 15))      
         self.text7.move(50,230)
+        self.text8.setFont(QFont('Arial', 15))
+        self.text8.move(50, 260)
 
         closeButton = QPushButton('Close', self)
         closeButton.clicked.connect(self.close_on_click)
@@ -156,16 +160,16 @@ class ArmWindow(QWidget):
         self.close()
  
     def keyPressEvent(self, event):
-        if(event.key() == Qt.Key_X):
+        if(event.key() == Qt.Key_0):
             print('Claw Opened')
             self.claw_open()
-        if(event.key() == Qt.Key_C):
+        if(event.key() == Qt.Key_9):
             print("Claw Closed")
             self.claw_closed()     
-        if(event.key() == Qt.Key_D):
+        if(event.key() == Qt.Key_M):
             print('Base Shift Right')
             self.base_right()
-        if(event.key() == Qt.Key_A):
+        if(event.key() == Qt.Key_N):
             print('Bace Shift Left')
             self.base_left()
         if(event.key() == Qt.Key_U):
@@ -186,6 +190,12 @@ class ArmWindow(QWidget):
         if(event.key() == Qt.Key_L):
             print('Middle Joint Backwards')
             self.top_joint_backwards()
+        if(event.key() == Qt.Key_Y):
+            print('Wrist Clockwise')
+            self.wrist_clockwise()
+        if(event.key() == Qt.Key_H):
+            print('Wrist Counterclockwise')
+            self.wrist_counterclockwise()
         if(event.key() == Qt.Key_Escape):
             print('Stop All')
             self.stop_all()
@@ -222,6 +232,12 @@ class ArmWindow(QWidget):
     
     def stop_all(self):
         serArm.write("Stop All".encode)
+
+    def wrist_clockwise():
+        serArm.write("Wrist Clockwise".encode)
+
+    def wrist_counterclockwise():
+        serArm.write("Wrist Counterclockwise".encode)
 
 
 if __name__ == '__main__':
