@@ -19,8 +19,11 @@ WORKDIR /workspace
 #
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-	python3-pip \  
-	git \
+	software-properties-common \
+  python3-pip \  
+	vim \
+  screen \
+  git \
 	cmake \
 	build-essential \
 	curl \
@@ -34,6 +37,8 @@ RUN apt-get update && \
 
 RUN python3 -m pip install importlib-metadata
 
+RUN add-apt-repository ppa:deadsnakes/ppa
+
 RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
 RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
 #
@@ -41,6 +46,7 @@ RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt
 #
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+          python3.9 \
           unzip \
 	  libpython3-dev \
           python3-rosdep \
@@ -79,8 +85,8 @@ WORKDIR /
 #
 # ros_deep_learning (PyTorch-based container only)
 #
-COPY ./scripts/ros_deep_learning.sh /tmp/ros_deep_learning.sh
-RUN cd /tmp && ./ros_deep_learning.sh
+#COPY ./scripts/ros_deep_learning.sh /tmp/ros_deep_learning.sh
+#RUN cd /tmp && ./ros_deep_learning.sh
 
 #COPY ./Miniconda3-latest-Linux-aarch64.sh .
 #RUN chmod +x Miniconda3-latest-Linux-aarch64.sh && ./Miniconda3-latest-Linux-aarch64.sh
@@ -88,3 +94,4 @@ RUN cd /tmp && ./ros_deep_learning.sh
 #Copy intall shell script for opencv
 COPY ./install_opencv4.5.0_Jetson.sh .
 RUN chmod +x install_opencv4.5.0_Jetson.sh && ./install_opencv4.5.0_Jetson.sh
+RUN mkdir -p ~/catkin_ws/src
