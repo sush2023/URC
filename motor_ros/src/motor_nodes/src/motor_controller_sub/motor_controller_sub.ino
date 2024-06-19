@@ -1,9 +1,8 @@
-// Differential Drive Version 1.1 - Kaegan Phillips (1/30/24)
-
-//run using rosserial_python serial_node.py _port:=/dev/ttyACM0 _baud:=115200
-#include <Arduino.h>
 #include <ros.h>
+#include <ArduinoHardware.h>
 #include <std_msgs/String.h>
+#include <std_msgs/UInt8.h>
+#include<string.h>
 
 /*-----Left Motors-----*/
 #define LF_DIR 13 // Left-Front
@@ -16,170 +15,154 @@
 #define RB_DIR 7 // Right-Back
 #define R_PWM  6  // Right-PWM
 
-// Side class declaration
-class Side
-{
-private:
-  int F_DIR, M_DIR, B_DIR, PWM;
-public:
-  // Side constructor
-  Side(int F, int M, int B, int P) : F_DIR(F), M_DIR(M), B_DIR(B), PWM(P)
-  {
-    // set outputs
-    pinMode(F_DIR, OUTPUT);
-    pinMode(M_DIR, OUTPUT);
-    pinMode(B_DIR, OUTPUT);
-    pinMode(PWM,   OUTPUT);
-  }
-  // Side movement functions
-  void forward(float speed);
-  void reverse(float speed);
-};
-// function to rotate Side forward
-void Side::forward(float speed)
-{
-  // HIGH for forward rotation
-  digitalWrite(F_DIR, HIGH);
-  digitalWrite(M_DIR, HIGH);
-  digitalWrite(B_DIR, HIGH);
-  analogWrite(PWM, speed);
-}
-// function to rotate Side backward
-void Side::reverse(float speed)
-{
-  // LOW for reverse rotation
-  digitalWrite(F_DIR, LOW);
-  digitalWrite(M_DIR, LOW);
-  digitalWrite(B_DIR, LOW);
-  analogWrite(PWM, speed);
-}
-
-// Rover class declaration
-class Rover
-{
-  private:
-    // Side object instantiations
-    Side leftSide;
-    Side rightSide;
-    // Rover speed
-    float speed = 50.0;
-  public:
-    // Rover constructor to pass motor pins
-    Rover() : leftSide(LF_DIR, LM_DIR, LB_DIR, L_PWM),
-              rightSide(RF_DIR, RM_DIR, RB_DIR, R_PWM)
-    {}
-    // Rover public movement functions
-    void forward();
-    void reverse();
-    void turnLeft();
-    void turnRight();
-    void boost();
-    void stop();
-};
-// function to move Rover forward
-void Rover::forward()
-{
-  leftSide.forward(speed);
-  rightSide.forward(speed);
-}
-// function to move Rover backward
-void Rover::reverse()
-{
-  leftSide.reverse(speed);
-  rightSide.reverse(speed);
-}
-// function to turn Rover left
-void Rover::turnLeft()
-{
-  leftSide.forward(speed);
-  rightSide.reverse(speed);
-}
-// function to turn Rover right
-void Rover::turnRight()
-{
-  leftSide.reverse(speed);
-  rightSide.forward(speed);
-}
-// function to boost Rover
-void Rover::boost()
-{
-  // incremented boost
-  while (speed < 200)
-  {
-    analogWrite(L_PWM, speed);
-    analogWrite(R_PWM, speed);
-    speed += 0.01;
-  }
-}
-// function to stop Rover
-void Rover::stop()
-{
-  // incremented stop
-  while (speed > 0)
-  {
-    analogWrite(L_PWM, speed);
-    analogWrite(R_PWM, speed);
-    speed -= 0.01;
-  }
-}
-
 // ROS Setup
-char input = 0;
-void messageCb( const std_msgs::String& msg)
-{
-  input = msg.data;
-}
+uint8_t input = 0;
+
+int pwmSpeed = 50;
+
 ros::NodeHandle nh;
-ros::Subscriber<std_msgs::String> sub("motor_controller_publisher", &messageCb );
+
+void messageCb( const std_msgs::UInt8& toggle_msg){
+  Serial.println("Message is: " );
+  Serial.println(toggle_msg.data);
+  input = toggle_msg.data;
+}
+ros::Subscriber<std_msgs::UInt8> sub("motor_controller_publisher", &messageCb );
+
+std_msgs::String msg;
+ros::Publisher topic_pub("MotorRosPublisher", &msg);
 
 void setup() 
 {
-  // initialize serial communucation at 115200 baud
-  Serial.begin(57600);
-  Serial.println("Rover Control: Start");
-
+  Serial.begin(115200);
+  Serial.println("in setup");
   nh.initNode();
+  //nh.getHardware()->setBaud(115200);
   nh.subscribe(sub);
+  nh.advertise(topic_pub);
+
+  pinMode(LF_DIR, OUTPUT);
+  pinMode(LM_DIR, OUTPUT);
+  pinMode(LB_DIR, OUTPUT);
+  pinMode(L_PWM,   OUTPUT);
+
+  pinMode(RF_DIR, OUTPUT);
+  pinMode(RM_DIR, OUTPUT);
+  pinMode(RB_DIR, OUTPUT);
+  pinMode(R_PWM,   OUTPUT);
 }
 
-// Rover instantiation
-Rover rover;
+void foward() {
+  digitalWrite(LF_DIR, HIGH);
+  digitalWrite(LM_DIR, HIGH);
+  digitalWrite(LB_DIR, HIGH);
+  digitalWrite(R_PWM, pwmSpeed);
 
-// loop function to take input from serial interface
-void loop() 
-{
-  // input validation
-  if (input == '1' || input == '2' || input == '3' || input == '4' || input == '5' || input == '6')
-  {
-    // if 1 go forward
-    if (input == '1')
-    {
-      rover.forward();
-    }
-    // if 2 go backward
-    if (input == '2')
-    {
-      rover.reverse();
-    }
-    // if 3 turn left
-    if (input == '3')
-    {
-      rover.turnLeft();
-    }
-    // if 4 turn right
-    if (input == '4')
-    {
-      rover.turnRight();
-    }
-    // if 5 boost
-    if (input == '5')
-    {
-      rover.boost();
-    }
-    // if 6 stop
-    if (input == '6')
-    {
-      rover.stop();
-    }
+  digitalWrite(RF_DIR, HIGH);
+  digitalWrite(RM_DIR, HIGH);
+  digitalWrite(RB_DIR, HIGH);
+  digitalWrite(L_PWM, pwmSpeed);
+}
+
+void reverse() {
+  digitalWrite(LF_DIR, LOW);
+  digitalWrite(LM_DIR, LOW);
+  digitalWrite(LB_DIR, LOW);
+  digitalWrite(R_PWM, pwmSpeed);
+  
+  digitalWrite(RF_DIR, LOW);
+  digitalWrite(RM_DIR, LOW);
+  digitalWrite(RB_DIR, LOW);
+  digitalWrite(L_PWM, pwmSpeed);
+}
+
+void left() {
+  digitalWrite(LF_DIR, LOW);
+  digitalWrite(LM_DIR, LOW);
+  digitalWrite(LB_DIR, LOW);
+  digitalWrite(R_PWM, pwmSpeed);
+
+  digitalWrite(RF_DIR, HIGH);
+  digitalWrite(RM_DIR, HIGH);
+  digitalWrite(RB_DIR, HIGH);
+  digitalWrite(L_PWM, pwmSpeed);
+}
+
+void right() {
+  digitalWrite(LF_DIR, HIGH);
+  digitalWrite(LM_DIR, HIGH);
+  digitalWrite(LB_DIR, HIGH);
+  digitalWrite(R_PWM, pwmSpeed);
+
+  digitalWrite(RF_DIR, LOW);
+  digitalWrite(RM_DIR, LOW);
+  digitalWrite(RB_DIR, LOW);
+  digitalWrite(L_PWM, pwmSpeed); 
+}
+
+void boost() {
+  while (pwmSpeed < 200){
+    analogWrite(L_PWM, pwmSpeed);
+    analogWrite(R_PWM, pwmSpeed);
+    pwmSpeed += 0.01;
   }
+}
+
+void stopAll() {
+    while (pwmSpeed > 0){
+    analogWrite(L_PWM, pwmSpeed);
+    analogWrite(R_PWM, pwmSpeed);
+    pwmSpeed -= 0.01;
+  }
+}
+
+void loop() {
+  String output_string = "NO";
+  if (input != 0)
+  {
+    Serial.print("input change detected, input is:");
+    Serial.println(input);
+    char o_string[20];
+    if (input == 1)
+    {
+      Serial.println("Moving forward");
+      output_string = "Moving forward";
+      output_string.toCharArray(o_string, output_string.length()+1);
+      msg.data = o_string;
+      foward();
+    }
+    else if(input == 2){
+      output_string = "Moving reverse";
+      output_string.toCharArray(o_string, output_string.length()+1);
+      msg.data = o_string;
+      reverse();
+    }
+    else if(input == 3){
+      output_string = "Turn Left";
+      output_string.toCharArray(o_string, output_string.length()+1);
+      msg.data = o_string;
+      left();
+    }
+    else if(input == 4){
+      output_string = "Turn Right";
+      output_string.toCharArray(o_string, output_string.length()+1);
+      msg.data = o_string;
+      right();
+    }
+    else if (input == 5){
+      output_string = "Boost!";
+      output_string.toCharArray(o_string, output_string.length()+1);
+      msg.data = o_string;
+      boost();
+    }
+    else if (input == 6){
+      output_string = "STOP!";
+      output_string.toCharArray(o_string, output_string.length()+1);
+      msg.data = o_string;
+      stopAll();
+    }
+    topic_pub.publish(&msg);
+  }
+  input = 0;
+  nh.spinOnce();
 }
